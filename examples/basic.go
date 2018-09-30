@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"time"
 	"zermelo"
@@ -48,4 +50,17 @@ func main() {
 		}
 		fmt.Println(lesson.Subjects)
 	}
+
+	resp ,err := http.Get("https://ccg.zportal.nl/api/v2/oauth/logout&access_code=u5sv8au3gt7j1tgdinv60nbu09")
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	fmt.Println(string(body))
 }

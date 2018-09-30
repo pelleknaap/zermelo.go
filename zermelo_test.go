@@ -10,8 +10,8 @@ import (
 var z = ZermeloData{
 	Start: strconv.Itoa(int(time.Now().Unix())),
 	End: strconv.Itoa(int(time.Now().Add(time.Hour * 24 * 3).Unix())),
-	School:"ccg",
-	Key:"u5sv8au3gt7j1tgdinv60nbu09",
+	School:"school here",
+	Key:"key here",
 }
 
 func TestAppointments(t *testing.T) {
