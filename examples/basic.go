@@ -28,12 +28,28 @@ func main() {
 	}
 
 	// call z.GetApiKey() if you want to get a apikey with a koppel code
-	//err := z.GetApiKey()
-	//if err != nil {
-	//	fmt.Println("error getting apikey")
-	//	fmt.Println(err)
-	//	return
-	//}
+	err := z.GetApiKey()
+	if err != nil {
+		fmt.Println("error getting apikey")
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(z.Key)
+
+	// getting announcements
+	err = z.GetAnnouncements()
+	if err != nil {
+		fmt.Println("error getting announcements")
+		fmt.Println(err)
+		return
+	}
+
+	for _, announcement := range z.Announcements.Data {
+		fmt.Println(announcement.Title)
+	}
+
+
 
 	// getting the appointments
 	err := z.GetAppointments()
@@ -50,17 +66,4 @@ func main() {
 		}
 		fmt.Println(lesson.Subjects)
 	}
-
-	resp ,err := http.Get("https://ccg.zportal.nl/api/v2/oauth/logout&access_code=u5sv8au3gt7j1tgdinv60nbu09")
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-
-	fmt.Println(string(body))
 }
