@@ -22,11 +22,16 @@ type ZermeloData struct {
 	// the api key that can be retrieved by using the GetApiKey() function
 	Key string
 	Appointments Appointments
+	Announcements Announcements
 }
 
 // json wrapper structs
-type AppointmentWrapper struct {
+type JSONWrapperAppointments struct {
 	Response *Appointments
+}
+
+type JSONWrapperAnnouncements struct {
+	Response *Announcements
 }
 
 type ApiKeyWrapper struct {
@@ -62,9 +67,24 @@ type Lesson struct {
 	ChangeDescription   string   `json:"changeDescription"`
 }
 
-func (z *ZermeloData) GetAppointments() (error) {
-	var appointments Appointments
+type Announcements struct {
+	Status int
+	Message string
+	StartRow int
+	EndRow int
+	TotalRows int
+	Data []Announcement
+}
 
+type Announcement struct {
+	Id int
+	Start int
+	End int
+	Title string
+	Text string
+}
+
+func (z *ZermeloData) GetAppointments() (error) {
 	var url strings.Builder
 	fmt.Fprintf(&url, "https://%s.zportal.nl/api/v3/", z.School)
 	url.WriteString("appointments?user=~me")
@@ -83,7 +103,7 @@ func (z *ZermeloData) GetAppointments() (error) {
 
 	defer resp.Body.Close()
 
-	var appointmentsWrapper AppointmentWrapper
+	var appointmentsWrapper JSONWrapperAppointments
 
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&appointmentsWrapper)
@@ -94,7 +114,42 @@ func (z *ZermeloData) GetAppointments() (error) {
 	z.Appointments = *appointmentsWrapper.Response
 
 	if z.Appointments.Status != 200 {
-		return errors.New("Returned status code isn't 200, it is: " + strconv.Itoa(appointments.Status))
+		return errors.New("Returned status code isn't 200, it is: " + strconv.Itoa(z.Appointments.Status))
+	}
+
+	return nil
+}
+
+func (z *ZermeloData) GetAnnouncements() (error) {
+	var url strings.Builder
+	fmt.Fprintf(&url, "https://%s.zportal.nl/api/v2/", z.School)
+	url.WriteString("announcements?user=~me")
+	url.WriteString("&current=true")
+	url.WriteString("&access_token="+z.Key)
+
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return errors.Wrap(err, "Error getting json data")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return errors.New("Wrong statuscode returned")
+	}
+
+	defer resp.Body.Close()
+
+	var announcementsWrapper JSONWrapperAnnouncements
+
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&announcementsWrapper)
+	if err != nil {
+		return errors.Wrap(err, "Error decoding json")
+	}
+
+	z.Announcements = *announcementsWrapper.Response
+
+	if z.Announcements.Status != 200 {
+		return errors.New("Returned status code isn't 200, it is: " + strconv.Itoa(z.Announcements.Status))
 	}
 
 	return nil
