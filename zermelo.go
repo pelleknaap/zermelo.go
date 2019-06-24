@@ -31,14 +31,13 @@ type JSONWrapperAppointments struct {
 	Response *Appointments
 }
 
-
 // JSONWrapperAnnouncements is a wrapper for the announcements struct
 // It's needed to decode the json from the request
 type JSONWrapperAnnouncements struct {
 	Response *Announcements
 }
 
-// JSONWrapperAnnouncements is a wrapper for the api key string
+// JSONApiKeyWrapper  is a wrapper for the api key string
 // It's needed to decode the json from the request
 type JSONApiKeyWrapper struct {
 	AccessToken string `json:"access_token"`
@@ -96,8 +95,7 @@ type Announcement struct {
 	Text  string
 }
 
-// GetAppointments
-// Gets all the appointments from the Zermelo api
+// GetAppointments gets all the appointments from the Zermelo api
 // used z.Start & z.End to determine the period of the appointments
 // Needs z.Key to access the API, will return an error if there isn't one
 // Makes a request to the Zermelo api and fills the z.Appointments slice
@@ -145,8 +143,7 @@ func (z *ZermeloData) GetAppointments() error {
 	return nil
 }
 
-// GetAnnouncements
-// Gets all announcements from the Zermelo API
+// GetAnnouncements gets all announcements from the Zermelo API
 // The z.Key variable needs to be present, an error will be returned if it isn't
 // fills the z.Announcements slice, returns error if something went wrong
 func (z *ZermeloData) GetAnnouncements() error {
