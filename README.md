@@ -1,6 +1,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/pelleknaap/zermelo.go)](https://goreportcard.com/report/github.com/pelleknaap/zermelo.go)
 
-# zermelo.go
+# Zermelo.go
 A little Zermelo API wrapper, made in Go (golang).
 
 # Quick Start
