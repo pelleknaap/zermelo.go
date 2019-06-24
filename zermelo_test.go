@@ -18,7 +18,7 @@ func TestAppointments(t *testing.T) {
 	// getting the appointments
 	err := z.GetAppointments()
 	if err != nil {
-		t.Errorf("Expected an appointment slice, however an error occured: %b", err)
+		t.Errorf("Expected an appointment slice, however an error occurred: %b", err)
 	}
 
 	if len(z.Appointments.Data) < 1 {
