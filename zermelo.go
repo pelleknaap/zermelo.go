@@ -84,19 +84,32 @@ type Announcement struct {
 	Text string
 }
 
-func (z *ZermeloData) GetAppointments() (error) {
-	var url strings.Builder
-	fmt.Fprintf(&url, "https://%s.zportal.nl/api/v3/", z.School)
-	url.WriteString("appointments?user=~me")
-	url.WriteString("&start="+z.Start)
-	url.WriteString("&end="+z.End)
-	url.WriteString("&access_token="+z.Key)
 
-	resp, err := http.Get(url.String())
+// GetAppointments
+// Gets all the appointments from the Zermelo api
+// used z.Start & z.End to determine the period of the appointments
+// Needs z.Key to access the API, will return an error if there isn't one
+// Makes a request to the Zermelo api and fills the z.Appointments slice
+func (z *ZermeloData) GetAppointments() error {
+	if z.Start == "" || z.End == ""|| z.Key == "" {
+		return errors.New("Not all needed variables are present, check the z.Start, z.End & the z.Key variables")
+	}
+
+	// make the url
+	var reqUrl strings.Builder
+	fmt.Fprintf(&reqUrl, "https://%s.zportal.nl/api/v3/", z.School)
+	reqUrl.WriteString("appointments?user=~me")
+	reqUrl.WriteString("&start="+z.Start)
+	reqUrl.WriteString("&end="+z.End)
+	reqUrl.WriteString("&access_token="+z.Key)
+
+	// Get the data
+	resp, err := http.Get(reqUrl.String())
 	if err != nil {
 		return errors.Wrap(err, "Error getting json data")
 	}
 
+	// Check if nothing went wrong with the request
 	if resp.StatusCode != http.StatusOK {
 		return errors.New("Wrong statuscode returned")
 	}
@@ -113,6 +126,7 @@ func (z *ZermeloData) GetAppointments() (error) {
 
 	z.Appointments = *appointmentsWrapper.Response
 
+	// Check if Zermelo's api also returned 200 as a Status
 	if z.Appointments.Status != 200 {
 		return errors.New("Returned status code isn't 200, it is: " + strconv.Itoa(z.Appointments.Status))
 	}
@@ -120,18 +134,29 @@ func (z *ZermeloData) GetAppointments() (error) {
 	return nil
 }
 
-func (z *ZermeloData) GetAnnouncements() (error) {
-	var url strings.Builder
-	fmt.Fprintf(&url, "https://%s.zportal.nl/api/v2/", z.School)
-	url.WriteString("announcements?user=~me")
-	url.WriteString("&current=true")
-	url.WriteString("&access_token="+z.Key)
+// GetAnnouncements
+// Gets all announcements from the Zermelo API
+// The z.Key variable needs to be present, an error will be returned if it isn't
+// fills the z.Announcements slice, returns error if something went wrong
+func (z *ZermeloData) GetAnnouncements() error {
+	if z.Key == "" {
+		return errors.New("Not all needed variables are present, check the z.Start, z.End & the z.Key variables")
+	}
 
-	resp, err := http.Get(url.String())
+	// Create the url for the request
+	var reqUrl strings.Builder
+	fmt.Fprintf(&reqUrl, "https://%s.zportal.nl/api/v2/", z.School)
+	reqUrl.WriteString("announcements?user=~me")
+	reqUrl.WriteString("&current=true")
+	reqUrl.WriteString("&access_token="+z.Key)
+
+	// create and execute the request
+	resp, err := http.Get(reqUrl.String())
 	if err != nil {
 		return errors.Wrap(err, "Error getting json data")
 	}
 
+	// check if nothing went wrong
 	if resp.StatusCode != http.StatusOK {
 		return errors.New("Wrong statuscode returned")
 	}
@@ -146,6 +171,7 @@ func (z *ZermeloData) GetAnnouncements() (error) {
 		return errors.Wrap(err, "Error decoding json")
 	}
 
+	// set the announcements slice to the response data
 	z.Announcements = *announcementsWrapper.Response
 
 	if z.Announcements.Status != 200 {
@@ -155,7 +181,9 @@ func (z *ZermeloData) GetAnnouncements() (error) {
 	return nil
 }
 
-func (z *ZermeloData) GetApiKey() (error) {
+// GetApiKey gets the api key needed to interact with the api from the zermelo api
+// The z.Authcode variable needs to be present, otherwise an error will be returned
+func (z *ZermeloData) GetApiKey() error {
 	if z.AuthCode == "" {
 		return errors.New("Please fill-in the auth code before trying to get an apikey")
 	}
