@@ -58,11 +58,12 @@ func main() {
 	}
 
 	// ranging over the appointment data
+	// printing all the cancelled lessons
 	for _, lesson := range z.Appointments.Data {
 		if lesson.Cancelled == true || lesson.Valid == false {
-			fmt.Println("cancelled")
+			fmt.Println(lesson.Subject)
+			fmt.Println("This leson has been cancelled")
 			continue
 		}
-		fmt.Println(lesson.Subjects)
 	}
 }
