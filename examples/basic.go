@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"github.com/pelleknaap/zermelo"
 	"strconv"
 	"time"
-	"zermelo"
 )
 
 func main() {
@@ -17,17 +15,20 @@ func main() {
 
 	// filling in all the data so we can call methods on it
 	z := zermelo.ZermeloData{
-		Start:strconv.Itoa(int(start)),
-		End:strconv.Itoa(int(end)),
+		Start: strconv.Itoa(int(start)),
+		End:   strconv.Itoa(int(end)),
 
 		// fill-in your own school
-		School:"ccg",
+		School: "ccg",
 
 		// fill-in your own apikey, or use AuthCode to generate an apikey
-		Key:"u5sv8au3gt7j1tgdinv60nbu09",
+		//Key:"your api key here",
+
+		AuthCode: "your auth code here",
 	}
 
-	// call z.GetApiKey() if you want to get a apikey with a koppel code
+	// call z.GetApiKey() if you want to get a api key with an auth code or "koppel code"
+	// if you already got an api key yourself, you don't have to call the "GetApiKey" function
 	err := z.GetApiKey()
 	if err != nil {
 		fmt.Println("error getting apikey")
@@ -49,10 +50,8 @@ func main() {
 		fmt.Println(announcement.Title)
 	}
 
-
-
 	// getting the appointments
-	err := z.GetAppointments()
+	err = z.GetAppointments()
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -8,17 +8,17 @@ import (
 
 // setting up the needed data
 var z = ZermeloData{
-	Start: strconv.Itoa(int(time.Now().Unix())),
-	End: strconv.Itoa(int(time.Now().Add(time.Hour * 24 * 3).Unix())),
-	School:"school here",
-	Key:"key here",
+	Start:  strconv.Itoa(int(time.Now().Unix())),
+	End:    strconv.Itoa(int(time.Now().Add(time.Hour * 24 * 3).Unix())),
+	School: "school here",
+	Key:    "key here",
 }
 
 func TestAppointments(t *testing.T) {
 	// getting the appointments
 	err := z.GetAppointments()
 	if err != nil {
-		t.Errorf("Expected an appointment slice, however an error occured: %b", err)
+		t.Errorf("Expected an appointment slice, however an error occurred: %b", err)
 	}
 
 	if len(z.Appointments.Data) < 1 {
