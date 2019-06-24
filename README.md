@@ -1,9 +1,7 @@
-# zermelo.go
-A little zermelo API wrapper, made in Go (golang).
-I'll add a lot of other features in the near future but for now it only supports getting an access token with a "koppel code" and getting appointments.
-Things I'm looking into adding are:
-Function to get current announcements,
+[![Go Report Card](https://goreportcard.com/badge/github.com/pelleknaap/zermelo.go)](https://goreportcard.com/report/github.com/pelleknaap/zermelo.go)
 
+# zermelo.go
+A little Zermelo API wrapper, made in Go (golang).
 
 # Quick Start
 Create a "ZermeloData" object, provide the access_token directly or use a "koppel code".
