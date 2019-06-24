@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -125,15 +126,12 @@ func (z *ZermeloData) GetAppointments() error {
 
 	defer resp.Body.Close()
 
-	var appointmentsWrapper JSONWrapperAppointments
-
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&appointmentsWrapper)
+	appointments, err := decodeJsonAppointments(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "Error decoding json")
+		return err
 	}
 
-	z.Appointments = *appointmentsWrapper.Response
+	z.Appointments = appointments
 
 	// Check if Zermelo's api also returned 200 as a Status
 	if z.Appointments.Status != 200 {
@@ -141,6 +139,18 @@ func (z *ZermeloData) GetAppointments() error {
 	}
 
 	return nil
+}
+
+func decodeJsonAppointments(body io.Reader) (Appointments, error){
+	var appoinmentsWrapper JSONWrapperAppointments
+
+	decoder := json.NewDecoder(body)
+	err := decoder.Decode(&appoinmentsWrapper)
+	if err != nil {
+		return Appointments{}, errors.Wrap(err, "Error decoding json")
+	}
+
+	return *appoinmentsWrapper.Response, nil
 }
 
 // GetAnnouncements gets all announcements from the Zermelo API
@@ -171,22 +181,30 @@ func (z *ZermeloData) GetAnnouncements() error {
 
 	defer resp.Body.Close()
 
-	var announcementsWrapper JSONWrapperAnnouncements
-
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&announcementsWrapper)
+	announcements, err := decodeJsonAnnouncements(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "Error decoding json")
+		return err
 	}
 
-	// set the announcements slice to the response data
-	z.Announcements = *announcementsWrapper.Response
+	z.Announcements = announcements
 
 	if z.Announcements.Status != 200 {
 		return errors.New("Returned status code isn't 200, it is: " + strconv.Itoa(z.Announcements.Status))
 	}
 
 	return nil
+}
+
+func decodeJsonAnnouncements(body io.Reader) (Announcements, error){
+	var announcementsWrapper JSONWrapperAnnouncements
+
+	decoder := json.NewDecoder(body)
+	err := decoder.Decode(&announcementsWrapper)
+	if err != nil {
+		return Announcements{}, errors.Wrap(err, "Error decoding json")
+	}
+
+	return *announcementsWrapper.Response, nil
 }
 
 // GetApiKey gets the api key needed to interact with the api from the zermelo api
