@@ -15,16 +15,16 @@ func main() {
 
 	// filling in all the data so we can call methods on it
 	z := zermelo.ZermeloData{
-		Start:strconv.Itoa(int(start)),
-		End:strconv.Itoa(int(end)),
+		Start: strconv.Itoa(int(start)),
+		End:   strconv.Itoa(int(end)),
 
 		// fill-in your own school
-		School:"ccg",
+		School: "ccg",
 
 		// fill-in your own apikey, or use AuthCode to generate an apikey
 		//Key:"your api key here",
 
-		AuthCode:"your auth code here",
+		AuthCode: "your auth code here",
 	}
 
 	// call z.GetApiKey() if you want to get a api key with an auth code or "koppel code"

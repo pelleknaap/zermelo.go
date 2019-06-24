@@ -13,15 +13,15 @@ import (
 // ZermeloData is the struct that holds all the methods and data that is needed by the methods
 type ZermeloData struct {
 	School string
-	Start string
-	End string
+	Start  string
+	End    string
 
 	// the "koppel code", not the api key
 	AuthCode string
 
 	// the api key that can be retrieved by using the GetApiKey() function
-	Key string
-	Appointments Appointments
+	Key           string
+	Appointments  Appointments
 	Announcements Announcements
 }
 
@@ -39,9 +39,9 @@ type ApiKeyWrapper struct {
 }
 
 type Appointments struct {
-	Status int
+	Status    int
 	TotalRows int
-	Data []Lesson
+	Data      []Lesson
 }
 
 type Lesson struct {
@@ -68,22 +68,21 @@ type Lesson struct {
 }
 
 type Announcements struct {
-	Status int
-	Message string
-	StartRow int
-	EndRow int
+	Status    int
+	Message   string
+	StartRow  int
+	EndRow    int
 	TotalRows int
-	Data []Announcement
+	Data      []Announcement
 }
 
 type Announcement struct {
-	Id int
+	Id    int
 	Start int
-	End int
+	End   int
 	Title string
-	Text string
+	Text  string
 }
-
 
 // GetAppointments
 // Gets all the appointments from the Zermelo api
@@ -91,7 +90,7 @@ type Announcement struct {
 // Needs z.Key to access the API, will return an error if there isn't one
 // Makes a request to the Zermelo api and fills the z.Appointments slice
 func (z *ZermeloData) GetAppointments() error {
-	if z.Start == "" || z.End == ""|| z.Key == "" {
+	if z.Start == "" || z.End == "" || z.Key == "" {
 		return errors.New("Not all needed variables are present, check the z.Start, z.End & the z.Key variables")
 	}
 
@@ -99,9 +98,9 @@ func (z *ZermeloData) GetAppointments() error {
 	var reqUrl strings.Builder
 	fmt.Fprintf(&reqUrl, "https://%s.zportal.nl/api/v3/", z.School)
 	reqUrl.WriteString("appointments?user=~me")
-	reqUrl.WriteString("&start="+z.Start)
-	reqUrl.WriteString("&end="+z.End)
-	reqUrl.WriteString("&access_token="+z.Key)
+	reqUrl.WriteString("&start=" + z.Start)
+	reqUrl.WriteString("&end=" + z.End)
+	reqUrl.WriteString("&access_token=" + z.Key)
 
 	// Get the data
 	resp, err := http.Get(reqUrl.String())
@@ -148,7 +147,7 @@ func (z *ZermeloData) GetAnnouncements() error {
 	fmt.Fprintf(&reqUrl, "https://%s.zportal.nl/api/v2/", z.School)
 	reqUrl.WriteString("announcements?user=~me")
 	reqUrl.WriteString("&current=true")
-	reqUrl.WriteString("&access_token="+z.Key)
+	reqUrl.WriteString("&access_token=" + z.Key)
 
 	// create and execute the request
 	resp, err := http.Get(reqUrl.String())
@@ -188,7 +187,7 @@ func (z *ZermeloData) GetApiKey() error {
 		return errors.New("Please fill-in the auth code before trying to get an apikey")
 	}
 
-	resp, err := http.PostForm("https://" + z.School + ".zportal.nl/api/v2/oauth/token",
+	resp, err := http.PostForm("https://"+z.School+".zportal.nl/api/v2/oauth/token",
 		url.Values{"grant_type": {"authorization_code"}, "code": {z.AuthCode}})
 
 	if err != nil {
