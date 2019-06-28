@@ -41,16 +41,12 @@ func (c *core) GetAccessToken(authCode string) error {
 	form.Add("grant_type", "authorization_code")
 	form.Add("code", authCode)
 
-	fmt.Println(form.Encode())
-
 	var d accessTokenReply
 
 	err := c.request(http.MethodPost, "oauth/token?grant_type=authorization_code&code=" + authCode, &d, nil)
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(d)
 
 	c.accessCode = d.AccessToken
 
@@ -62,7 +58,6 @@ func (c core) Get(action string, d interface{}) error {
 }
 
 func (c core) request(method, action string, d interface{}, reader io.Reader) error {
-	fmt.Println(getURI(c.school, action, apiVersion))
 	req, err := http.NewRequest(method, getURI(c.school, action, apiVersion), reader)
 	if err != nil {
 		return err
